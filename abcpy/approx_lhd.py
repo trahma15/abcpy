@@ -1,6 +1,6 @@
 import numpy as np
 from abc import ABCMeta, abstractmethod
-from glmnet import LogitNet
+from abcpy.glmnet.logistic import LogitNet
 from scipy.stats import gaussian_kde, rankdata, norm
 from sklearn.covariance import ledoit_wolf
 
@@ -99,7 +99,7 @@ class Approx_likelihood(metaclass=ABCMeta):
 
         # Check whether y_obs is same as the stored dataset.
         if self.data_set is not None:
-            # check that the the observations have the same length; if not, they can't be the same:
+            # check that the observations have the same length; if not, they can't be the same:
             if len(y_obs) != len(self.data_set):
                 self.dataSame = False
             elif len(np.array(y_obs[0]).reshape(-1, )) == 1:
@@ -380,9 +380,10 @@ class PenLogReg(Approx_likelihood, GraphTools):
         y = np.append(np.zeros(self.n_simulate), np.ones(self.n_simulate))
         X = np.array(np.concatenate((stat_sim, self.ref_data_stat), axis=0))
         # define here groups for cross-validation:
-        groups = np.repeat(np.arange(self.n_folds), np.int(np.ceil(self.n_simulate / self.n_folds)))
+        groups = np.repeat(np.arange(self.n_folds), int(np.ceil(self.n_simulate / self.n_folds)))
         groups = groups[:self.n_simulate].tolist()
         groups += groups  # duplicate it as groups need to be defined for both datasets
+
         m = LogitNet(alpha=1, n_splits=self.n_folds, max_iter=self.max_iter, random_state=self.seed, scoring="log_loss")
         m = m.fit(X, y, groups=groups)
         result = -np.sum((m.intercept_ + np.sum(np.multiply(m.coef_, stat_obs), axis=1)), axis=0)

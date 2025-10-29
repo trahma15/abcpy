@@ -1,20 +1,23 @@
 # Always prefer setuptools over distutils
 import sys
+
+from pip._internal.network.session import PipSession
+from pip._internal.req import parse_requirements
 from setuptools import setup, find_packages
 from os import path
 
-try: # for pip >= 10
-    from pip._internal.req import parse_requirements
-except ImportError: # for pip <= 9.0.3
-    from pip.req import parse_requirements
-    
-try: # for pip >= 19.3
-    from pip._internal.network.session import PipSession
-except ImportError:
-    try: # for pip < 19.3 and >=10
-        from pip._internal.download import PipSession
-    except ImportError: # for pip <= 9.0.3
-        from pip.download import PipSession
+# try: # for pip >= 10
+#     from pip._internal.req import parse_requirements
+# except ImportError: # for pip <= 9.0.3
+#     from pip.req import parse_requirements
+#
+# try: # for pip >= 19.3
+#     from pip._internal.network.session import PipSession
+# except ImportError:
+#     try: # for pip < 19.3 and >=10
+#         from pip._internal.download import PipSession
+#     except ImportError: # for pip <= 9.0.3
+#         from pip.download import PipSession
 
 here = path.abspath(path.dirname(__file__))
 
@@ -97,9 +100,9 @@ setup(
     # If there are data files included in your packages that need to be
     # installed, specify them here.  If using Python 2.6 or less, then these
     # have to be included in MANIFEST.in as well.
-    # package_data={
-    #     'sample': ['package_data.dat'],
-    # },
+    package_data={
+        'abcpy': ['./abcpy/glmnet/_glmnet.cpython-312-darwin.so'],
+    },
 
     # Although 'package_data' is the preferred approach, in some case you may
     # need to place data files outside of your packages. See:
